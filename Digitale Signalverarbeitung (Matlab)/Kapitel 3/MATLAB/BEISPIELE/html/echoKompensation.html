@@ -1,0 +1,178 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>echoKompensation</title>
+      <meta name="generator" content="MATLAB 7.3">
+      <meta name="date" content="2012-08-03">
+      <meta name="m-file" content="echoKompensation"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#2">Simulation der St&ouml;rung</a></li>
+               <li><a href="#3">Echounterdr&uuml;ckung</a></li>
+               <li><a href="#4">Adaptiver Pr&auml;diktor</a></li>
+               <li><a href="#5">Hinweis: Adaptive ARMA-Filter und RLS-Abgleich</a></li>
+            </ul>
+         </div><pre class="codeinput"><span class="comment">% Echokompensation</span>
+<span class="comment">% durch einen adaptiver Pr&auml;diktor</span>
+<span class="comment">% (c) HSM, B. Wir 2.8.2012</span>
+clear <span class="string">all</span>; close <span class="string">all</span>;
+</pre><h2>Simulation der St&ouml;rung<a name="2"></a></h2><pre class="codeinput">Z = 2000 <span class="comment">%...Werte</span>
+x = randn(1,Z); x(end-50) = 8;
+y = filter([1 0 0 0.8],1,x);
+
+figure(1);
+         subplot(3,9, 1:6);
+plot(y(end-99:end),<span class="string">'r'</span>), hold <span class="string">on</span>; plot(x(end-99:end));  hold <span class="string">off</span>;
+title(<span class="string">'Zufallssignal: blau, mit Echo: rot'</span>);
+</pre><pre class="codeoutput">
+Z =
+
+        2000
+
+</pre><img vspace="5" hspace="5" src="echoKompensation_01.png"> <h2>Echounterdr&uuml;ckung<a name="3"></a></h2>
+         <p>Theorie: G(z)[1 - z^{-Delay)(W(z)] = 1</p>
+         <p>f&uuml;r      G(z) = (1 + 0.8 z^-3) und Delay = 2</p><pre>==&gt;     W(z) =  0.8 z^-1  - 0.64 z^-4   + 0.5 z^-7  - .....</pre><pre>==&gt;     w[k] =  [0  0.8  0  0  -0.64 0 0 0.5 ....]</pre><h2>Adaptiver Pr&auml;diktor<a name="4"></a></h2><pre class="codeinput">N = 10;   <span class="comment">% Filterordnung+1</span>
+DELAY = 2;
+STEP = 0.001;
+
+w = zeros(1,N);
+[echo_dach,e,w] = lmsPredictor(w,DELAY, STEP,y);
+
+     subplot(3,9,10:15);
+plot(e(end-99:end),<span class="string">'b'</span>); hold <span class="string">on</span> ; <span class="comment">%error == Nutzsignal !!</span>
+plot(x(end-99:end)-e(end-99:end),<span class="string">'g'</span>); hold <span class="string">off</span>; <span class="comment">% Rekonstruktionsfehler</span>
+title(<span class="string">'Echokompensation:blau, Rekonstruktionsfehler:gr&uuml;n'</span>);
+     subplot(3,9,19:24);
+stem(w); title(<span class="string">'Filterkoeffizienten'</span>);
+
+WINDOW = 64;
+     subplot(3,9,[7 16 25]);
+spectrogram(x,WINDOW);         title(<span class="string">'Spektrogramm/dB'</span>)
+     subplot(3,9,[8 17 26]);
+spectrogram(y,WINDOW);         title(<span class="string">'... mit Echo'</span>); axis <span class="string">off</span>;
+     subplot(3,9,[9 18 27]);
+spectrogram(echo_dach,WINDOW); title(<span class="string">'... Rek.Fehler'</span>); axis <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="echoKompensation_02.png"> <h2>Hinweis: Adaptive ARMA-Filter und RLS-Abgleich<a name="5"></a></h2><pre>sind f&uuml;r die Anwendung (noch) besser geeignet.</pre><p class="footer"><br>
+            Published with MATLAB&reg; 7.3<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+% Echokompensation
+% durch einen adaptiver Prädiktor 
+% (c) HSM, B. Wir 2.8.2012 
+clear all; close all;
+%% Simulation der Störung
+Z = 2000 %...Werte
+x = randn(1,Z); x(end-50) = 8;
+y = filter([1 0 0 0.8],1,x);
+
+figure(1);
+         subplot(3,9, 1:6);
+plot(y(end-99:end),'r'), hold on; plot(x(end-99:end));  hold off; 
+title('Zufallssignal: blau, mit Echo: rot'); 
+%% Echounterdrückung
+% Theorie: G(z)[1 - z^{-Delay)(W(z)] = 1
+%
+% für      G(z) = (1 + 0.8 z^-3) und Delay = 2
+%
+%  ==>     W(z) =  0.8 z^-1  - 0.64 z^-4   + 0.5 z^-7  - .....
+%
+%  ==>     w[k] =  [0  0.8  0  0  -0.64 0 0 0.5 ....]  
+
+%% Adaptiver Prädiktor
+% 
+N = 10;   % Filterordnung+1
+DELAY = 2;
+STEP = 0.001;
+
+w = zeros(1,N);
+[echo_dach,e,w] = lmsPredictor(w,DELAY, STEP,y);
+
+     subplot(3,9,10:15); 
+plot(e(end-99:end),'b'); hold on ; %error == Nutzsignal !! 
+plot(x(end-99:end)-e(end-99:end),'g'); hold off; % Rekonstruktionsfehler
+title('Echokompensation:blau, Rekonstruktionsfehler:grün');
+     subplot(3,9,19:24);
+stem(w); title('Filterkoeffizienten');
+
+WINDOW = 64;
+     subplot(3,9,[7 16 25]);
+spectrogram(x,WINDOW);         title('Spektrogramm/dB')
+     subplot(3,9,[8 17 26]); 
+spectrogram(y,WINDOW);         title('... mit Echo'); axis off;
+     subplot(3,9,[9 18 27]); 
+spectrogram(echo_dach,WINDOW); title('... Rek.Fehler'); axis off;
+
+%% Hinweis: Adaptive ARMA-Filter und RLS-Abgleich
+%  sind für die Anwendung (noch) besser geeignet. 
+##### SOURCE END #####
+-->
+   </body>
+</html>

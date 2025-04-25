@@ -1,0 +1,16 @@
+LDLIBS+=-pthread
+
+all:  thread_sum thread_sum_spinlock_v0 thread_sum_spinlock_v1 thread_sum_mutex thread_sum_lockguard thread_sum_atomic thread_sum_bakery
+
+thread_sum: thread_sum.cpp
+thread_sum_spinlock_v0: thread_sum_spinlock_v0.cpp
+thread_sum_spinlock_v1: thread_sum_spinlock_v1.cpp
+thread_sum_mutex: thread_sum_mutex.cpp
+thread_sum_lockguard: thread_sum_lockguard.cpp
+thread_sum_atomic: thread_sum_atomic.cpp
+thread_sum_bakery: thread_sum_bakery.cpp
+
+clean:
+	-rm thread_sum thread_sum_spinlock_v0 thread_sum_spinlock_v1 thread_sum_mutex thread_sum_lockguard thread_sum_atomic thread_sum_bakery
+
+

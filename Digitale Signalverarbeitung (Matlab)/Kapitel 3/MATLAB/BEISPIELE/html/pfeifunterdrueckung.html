@@ -1,0 +1,177 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>pfeifunterdrueckung</title>
+      <meta name="generator" content="MATLAB 7.3">
+      <meta name="date" content="2012-08-02">
+      <meta name="m-file" content="pfeifunterdrueckung"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#1">Pfeifunterdr&uuml;ckung</a></li>
+               <li><a href="#2">Sinuston</a></li>
+               <li><a href="#3">Pfeifunterdr&uuml;ckung</a></li>
+            </ul>
+         </div>
+         <h2>Pfeifunterdr&uuml;ckung<a name="1"></a></h2><pre>durch einen adaptiver Pr&auml;diktor
+(c) HSM, B. Wir 2.8.2012</pre><pre class="codeinput">clear <span class="string">all</span>; close <span class="string">all</span>;
+</pre><h2>Sinuston<a name="2"></a></h2><pre class="codeinput">F_A = 4000   <span class="comment">% Abtastfrequenz in Hz</span>
+T_A = 1/F_A  <span class="comment">% Abtastabstand in s</span>
+WINDOW = 64;  <span class="comment">% Fenster f&uuml;r Spektrogramm</span>
+F = 400;     <span class="comment">% Sinus-Frequenz in Hz</span>
+<span class="comment">% F = 3900;</span>
+<span class="comment">% F = 100;</span>
+t = 0:T_A: T_A*4999;
+x = sin (2*pi*F*t);
+r = randn(size(t));
+x_r = x + 0.5*r;
+
+figure(1)
+subplot(3,2,1); plot(t(1:400),x_r(1:400));
+title(<span class="string">'Zufallssignal + Sinus'</span>);xlabel(<span class="string">'t/ms'</span>);
+</pre><pre class="codeoutput">
+F_A =
+
+        4000
+
+
+T_A =
+
+  2.5000e-004
+
+</pre><img vspace="5" hspace="5" src="pfeifunterdrueckung_01.png"> <h2>Pfeifunterdr&uuml;ckung<a name="3"></a></h2><pre class="codeinput">N = 80;   <span class="comment">% Filterordnung+1</span>
+DELAY = 5;
+STEP = 0.01/N;
+				<span class="comment">% adaptive filtering</span>
+w = zeros(1,N);
+[y,e,w] = lmsPredictor(w,DELAY, STEP,x_r);
+
+subplot(3,2,3); plot(t(1:400),y(1:400)); title(<span class="string">'Filterausgang==&gt;Sinus'</span>);
+subplot(3,2,5); plot(t(1:400),e(1:400)); title(<span class="string">'Fehlersignal==&gt;Zufallsignal'</span>);
+subplot(3,2,[2, 4,6]);
+spectrogram(e,WINDOW);colorbar;title(<span class="string">'Spektrogramm/dB'</span>)
+
+soundsc(x_r);
+soundsc(y);
+soundsc(e);
+
+figure(2);
+zplane(w,1); title(<span class="string">'Bandpass'</span>)
+
+freqz(w,1,512)
+</pre><img vspace="5" hspace="5" src="pfeifunterdrueckung_02.png"> <img vspace="5" hspace="5" src="pfeifunterdrueckung_03.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.3<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Pfeifunterdrückung
+%  durch einen adaptiver Prädiktor 
+% (c) HSM, B. Wir 2.8.2012 
+clear all; close all;
+%% Sinuston
+F_A = 4000   % Abtastfrequenz in Hz
+T_A = 1/F_A  % Abtastabstand in s
+WINDOW = 64;  % Fenster für Spektrogramm
+F = 400;     % Sinus-Frequenz in Hz
+% F = 3900; 
+% F = 100;
+t = 0:T_A: T_A*4999;
+x = sin (2*pi*F*t);
+r = randn(size(t));
+x_r = x + 0.5*r;
+
+figure(1)
+subplot(3,2,1); plot(t(1:400),x_r(1:400)); 
+title('Zufallssignal + Sinus');xlabel('t/ms');
+
+%% Pfeifunterdrückung
+N = 80;   % Filterordnung+1
+DELAY = 5;
+STEP = 0.01/N;
+				% adaptive filtering
+w = zeros(1,N);
+[y,e,w] = lmsPredictor(w,DELAY, STEP,x_r);
+
+subplot(3,2,3); plot(t(1:400),y(1:400)); title('Filterausgang==>Sinus');
+subplot(3,2,5); plot(t(1:400),e(1:400)); title('Fehlersignal==>Zufallsignal');
+subplot(3,2,[2, 4,6]);
+spectrogram(e,WINDOW);colorbar;title('Spektrogramm/dB')
+
+soundsc(x_r);
+soundsc(y);
+soundsc(e);
+
+figure(2);
+zplane(w,1); title('Bandpass')
+
+freqz(w,1,512)
+##### SOURCE END #####
+-->
+   </body>
+</html>

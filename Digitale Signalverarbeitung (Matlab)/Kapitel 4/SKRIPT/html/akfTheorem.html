@@ -1,0 +1,219 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>akfTheorem</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-08-17"><meta name="DC.source" content="akfTheorem.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% akftheorem.m</span>
+<span class="comment">%</span>
+<span class="comment">% Skript SMU_o2, DSV12</span>
+<span class="comment">% B. Wir Sept. 02, 18.8.12</span>
+
+close <span class="string">all</span>
+clear
+clc
+
+WERTE = 256;
+EXP   = 100; <span class="comment">% Anzahl der Experimente</span>
+
+
+x =randn(EXP,WERTE);
+y =[1 0 0 0.5];
+
+z =conv2(x,y,<span class="string">'same'</span>); <span class="comment">% &uuml;ber alle Experimente</span>
+
+<span class="comment">% oder auch so</span>
+<span class="comment">% z=filter2(y,x);</span>
+
+akf_z = [];
+<span class="keyword">for</span> i=1:EXP;
+akf_z(i,:) = xcorr(z(i,:));  <span class="comment">% Korrelationsfolge</span>
+<span class="keyword">end</span>
+
+abs_fft_z=abs(fft(z'))';
+abs2_fft_z = abs_fft_z.^2;
+z_akf_z = real(ifft(abs2_fft_z')');      <span class="comment">% zyklische Korrelationsfolge</span>
+figure(1)
+
+subplot(3,2,1)
+plot(z(1,:));hold <span class="string">on</span> ; plot(sum(z)/EXP,<span class="string">'r'</span>)
+title(<span class="string">'z[k] = x[k] + 0.5 * x[k-3]'</span>);
+xlim([1, WERTE]);
+
+subplot(3,2,2)
+plot(abs2_fft_z(1,:));hold <span class="string">on</span> ; plot(sum(abs2_fft_z)/EXP,<span class="string">'r'</span>)
+title(<span class="string">' |DFT [ z[k] ]| ^2'</span>)
+xlim( [1, WERTE]);
+
+
+subplot(3,2,3);
+plot(akf_z(1,:));hold <span class="string">on</span> ; plot(sum(akf_z)/EXP,<span class="string">'r'</span>)
+title(<span class="string">'AKF [ z_k ] '</span>);
+xlim( [1, 2*WERTE-1]);
+
+
+subplot(3,2,5)
+plot(akf_z(1,:));hold <span class="string">on</span> ; plot(sum(akf_z)/EXP,<span class="string">'r'</span>)
+title(<span class="string">' Ausschnitt '</span>)
+xlim([WERTE-15,WERTE+15]);
+
+subplot(3,2,4)
+plot(z_akf_z(1,:));hold <span class="string">on</span> ; plot(sum(z_akf_z)/EXP,<span class="string">'r'</span>); hold <span class="string">off</span>
+title(<span class="string">'Zyklische AKF [ zk ]'</span>)
+xlim( [1, WERTE]);
+
+<span class="comment">% TIPP:  fftshift() bringt Peaks in die Mitte</span>
+<span class="comment">% subplot(3,2,4)</span>
+<span class="comment">% plot(fftshift(z_akf_z(1,:)));hold on ; plot(fftshift(sum(z_akf_z))/EXP,'r')</span>
+<span class="comment">% title('Zyklische AKF [ zk ]')</span>
+<span class="comment">% xlim( [1, WERTE]);</span>
+
+subplot(3,2,6)
+plot(z_akf_z(1,:));hold <span class="string">on</span> ; plot(sum(z_akf_z)/EXP,<span class="string">'r'</span>)
+title(<span class="string">'Ausschnitt'</span>)
+xlim([1 30]); legend(<span class="string">'1 Exp.'</span>,<span class="string">'Summe vieler Exp.'</span>)
+
+<span class="comment">% TIPP:  fftshift() bringt Peaks in die Mitte</span>
+<span class="comment">% subplot(3,2,6)</span>
+<span class="comment">% plot(fftshift(z_akf_z(1,:)));hold on ; plot(fftshift(sum(z_akf_z))/EXP,'r')</span>
+<span class="comment">% title('Ausschnitt')</span>
+<span class="comment">% xlim([WERTE/2-15,WERTE/2+15]);</span>
+</pre><img vspace="5" hspace="5" src="akfTheorem_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% akftheorem.m
+% 
+% Skript SMU_o2, DSV12
+% B. Wir Sept. 02, 18.8.12
+
+close all
+clear
+clc
+
+WERTE = 256;
+EXP   = 100; % Anzahl der Experimente
+
+
+x =randn(EXP,WERTE);
+y =[1 0 0 0.5];
+
+z =conv2(x,y,'same'); % über alle Experimente
+
+% oder auch so
+% z=filter2(y,x);
+
+akf_z = [];
+for i=1:EXP;
+akf_z(i,:) = xcorr(z(i,:));  % Korrelationsfolge
+end
+
+abs_fft_z=abs(fft(z'))';
+abs2_fft_z = abs_fft_z.^2;
+z_akf_z = real(ifft(abs2_fft_z')');      % zyklische Korrelationsfolge
+figure(1)
+
+subplot(3,2,1)
+plot(z(1,:));hold on ; plot(sum(z)/EXP,'r')
+title('z[k] = x[k] + 0.5 * x[k-3]');
+xlim([1, WERTE]);
+
+subplot(3,2,2)
+plot(abs2_fft_z(1,:));hold on ; plot(sum(abs2_fft_z)/EXP,'r')
+title(' |DFT [ z[k] ]| ^2')
+xlim( [1, WERTE]);
+
+
+subplot(3,2,3);
+plot(akf_z(1,:));hold on ; plot(sum(akf_z)/EXP,'r')
+title('AKF [ z_k ] ');
+xlim( [1, 2*WERTE-1]);
+
+
+subplot(3,2,5)
+plot(akf_z(1,:));hold on ; plot(sum(akf_z)/EXP,'r')
+title(' Ausschnitt ')
+xlim([WERTE-15,WERTE+15]);
+
+subplot(3,2,4)
+plot(z_akf_z(1,:));hold on ; plot(sum(z_akf_z)/EXP,'r'); hold off
+title('Zyklische AKF [ zk ]')
+xlim( [1, WERTE]);
+
+% TIPP:  fftshift() bringt Peaks in die Mitte
+% subplot(3,2,4)
+% plot(fftshift(z_akf_z(1,:)));hold on ; plot(fftshift(sum(z_akf_z))/EXP,'r')
+% title('Zyklische AKF [ zk ]')
+% xlim( [1, WERTE]);
+
+subplot(3,2,6)
+plot(z_akf_z(1,:));hold on ; plot(sum(z_akf_z)/EXP,'r')
+title('Ausschnitt')
+xlim([1 30]); legend('1 Exp.','Summe vieler Exp.')
+
+% TIPP:  fftshift() bringt Peaks in die Mitte
+% subplot(3,2,6)
+% plot(fftshift(z_akf_z(1,:)));hold on ; plot(fftshift(sum(z_akf_z))/EXP,'r')
+% title('Ausschnitt')
+% xlim([WERTE/2-15,WERTE/2+15]);
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,167 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>aSymmetrieEigenschaften</title>
+      <meta name="generator" content="MATLAB 7.3">
+      <meta name="date" content="2012-08-17">
+      <meta name="m-file" content="aSymmetrieEigenschaften"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#1">symmetrieEigenschaften (Aufgabe)</a></li>
+               <li><a href="#2">(i) Nach der IDFT ein reelles Signal</a></li>
+               <li><a href="#3">(ii) Nach der IDFT ein reelles symmetrisches Signal</a></li>
+               <li><a href="#4">(iii) Nach der IDFT ein relles antisymmetrisches Signal</a></li>
+            </ul>
+         </div>
+         <h2>symmetrieEigenschaften (Aufgabe)<a name="1"></a></h2>
+         <p>(c) HSM B.Wir 17.8.2012</p><pre class="codeinput">clear <span class="string">all</span>; close <span class="string">all</span>;
+<span class="comment">% Geben Sie jeweils 8 komplexe Zahlen, so dass gilt:</span>
+</pre><h2>(i) Nach der IDFT ein reelles Signal<a name="2"></a></h2><pre class="codeinput">X_r = [ 3, 2, 1, 0, -1, 0,  1, 2];
+X_i = [ 0, 4, 3, 2, 0, -2, -3, -4];
+X = X_r + 1j*X_i;
+
+x = ifft(X);
+figure (1)
+subplot(3,4,1); stem(x); title(<span class="string">'x: reell'</span>);
+subplot(3,4,2); stem(X_r); title(<span class="string">'Re(fft(x)'</span>);
+subplot(3,4,3); stem(X_i); title(<span class="string">'Im(fft(x)'</span>);
+subplot(3,4,4); stem(abs(X)); title(<span class="string">'abs(fft(x)'</span>);
+</pre><img vspace="5" hspace="5" src="aSymmetrieEigenschaften_01.png"> <h2>(ii) Nach der IDFT ein reelles symmetrisches Signal<a name="3"></a></h2><pre class="codeinput">X_r = [ 3, 2, 1, 0, -1, 0,  1, 2];
+X_i = [ 0, 0, 0, 0, 0, 0, 0, 0];
+X = X_r + 1j*X_i;
+
+x = ifft(X);
+
+subplot(3,4,5); stem(x); title(<span class="string">'x: reell, symmetrisch'</span>);
+subplot(3,4,6); stem(X_r); title(<span class="string">'Re(fft(x)'</span>);
+subplot(3,4,7); stem(X_i); title(<span class="string">'Im(fft(x)'</span>);
+subplot(3,4,8); stem(abs(X)); title(<span class="string">'abs(fft(x)'</span>);
+</pre><img vspace="5" hspace="5" src="aSymmetrieEigenschaften_02.png"> <h2>(iii) Nach der IDFT ein relles antisymmetrisches Signal<a name="4"></a></h2><pre class="codeinput">X_r = [ 0, 0, 0, 0, 0, 0,  0, 0];
+X_i = [ 0, 4, 3, 2, 0, -2, -3, -4];
+X = X_r + 1j*X_i;
+
+x = ifft(X);
+
+subplot(3,4,9); stem(x); title(<span class="string">'x: reell, anti-symm.'</span>);
+subplot(3,4,10); stem(X_r); title(<span class="string">'Re(fft(x)'</span>);
+subplot(3,4,11); stem(X_i); title(<span class="string">'Im(fft(x)'</span>);
+subplot(3,4,12); stem(abs(X)); title(<span class="string">'abs(fft(x)'</span>);
+</pre><img vspace="5" hspace="5" src="aSymmetrieEigenschaften_03.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.3<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% symmetrieEigenschaften (Aufgabe)
+% (c) HSM B.Wir 17.8.2012
+%
+clear all; close all;
+% Geben Sie jeweils 8 komplexe Zahlen, so dass gilt:  
+%% (i) Nach der IDFT ein reelles Signal
+
+X_r = [ 3, 2, 1, 0, -1, 0,  1, 2];
+X_i = [ 0, 4, 3, 2, 0, -2, -3, -4];
+X = X_r + 1j*X_i;
+
+x = ifft(X);
+figure (1)
+subplot(3,4,1); stem(x); title('x: reell');
+subplot(3,4,2); stem(X_r); title('Re(fft(x)');
+subplot(3,4,3); stem(X_i); title('Im(fft(x)');
+subplot(3,4,4); stem(abs(X)); title('abs(fft(x)');
+
+%% (ii) Nach der IDFT ein reelles symmetrisches Signal
+
+X_r = [ 3, 2, 1, 0, -1, 0,  1, 2];
+X_i = [ 0, 0, 0, 0, 0, 0, 0, 0];
+X = X_r + 1j*X_i;
+
+x = ifft(X);
+
+subplot(3,4,5); stem(x); title('x: reell, symmetrisch');
+subplot(3,4,6); stem(X_r); title('Re(fft(x)');
+subplot(3,4,7); stem(X_i); title('Im(fft(x)');
+subplot(3,4,8); stem(abs(X)); title('abs(fft(x)');
+
+%% (iii) Nach der IDFT ein relles antisymmetrisches Signal  
+X_r = [ 0, 0, 0, 0, 0, 0,  0, 0];
+X_i = [ 0, 4, 3, 2, 0, -2, -3, -4];
+X = X_r + 1j*X_i;
+
+x = ifft(X);
+
+subplot(3,4,9); stem(x); title('x: reell, anti-symm.');
+subplot(3,4,10); stem(X_r); title('Re(fft(x)');
+subplot(3,4,11); stem(X_i); title('Im(fft(x)');
+subplot(3,4,12); stem(abs(X)); title('abs(fft(x)');
+
+##### SOURCE END #####
+-->
+   </body>
+</html>

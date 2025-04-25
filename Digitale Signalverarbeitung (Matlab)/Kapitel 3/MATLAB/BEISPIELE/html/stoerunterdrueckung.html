@@ -1,0 +1,243 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>stoerunterdrueckung</title>
+      <meta name="generator" content="MATLAB 7.3">
+      <meta name="date" content="2012-08-06">
+      <meta name="m-file" content="stoerunterdrueckung"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#1">St&ouml;runterdr&uuml;ckung</a></li>
+               <li><a href="#2">Signale</a></li>
+               <li><a href="#3">Simulation der St&ouml;rung</a></li>
+               <li><a href="#4">Signalrekonstruktion</a></li>
+            </ul>
+         </div>
+         <h2>St&ouml;runterdr&uuml;ckung<a name="1"></a></h2><pre>durch einen adaptiver Pr&auml;diktor
+Ein Reporter macht ein Interview an einer stark befahrenen
+Stra&szlig;e. Skizzieren Sie ein adaptives System (\(&lt;5 \) Bl&ouml;cke) zur
+Kompensation des Stra&szlig;enl&auml;rms und beschreiben Sie es in 2 bis 3
+S&auml;tzen.
+(c) HSM, B. Wir 2.8.2012</pre><pre class="codeinput">clear <span class="string">all</span>; close <span class="string">all</span>;
+</pre><h2>Signale<a name="2"></a></h2><pre class="codeinput"><span class="comment">% St&ouml;rung</span>
+Z = 40000; <span class="comment">%... Abtastwerte</span>
+
+[x_r,f_s,NBITS] = wavread(<span class="string">'road.wav'</span>);
+x_r = resample(x_r,1,4); f_s = f_s/4;
+x_r = x_r(1:Z);
+f_s
+NBITS
+<span class="comment">%soundsc(x_r,f_s);</span>
+
+<span class="comment">% Nutzsignal</span>
+[x_n,f_s,NBITS] = wavread(<span class="string">'speech_dft.wav'</span>);
+x_n = resample(x_n,1,2); f_s = f_s/2;
+x_n = x_n(1:Z)';
+f_s
+NBITS
+<span class="comment">% soundsc(x_n,f_s)</span>
+
+figure(1); subplot(2,1,1);
+plot( x_r); title(<span class="string">'Hintergrundger&auml;usch'</span>);
+            subplot(2,1,2);
+plot(x_n); title(<span class="string">'Sprecher'</span>);
+</pre><pre class="codeoutput">
+f_s =
+
+       11025
+
+
+NBITS =
+
+    16
+
+
+f_s =
+
+       11025
+
+
+NBITS =
+
+    16
+
+</pre><img vspace="5" hspace="5" src="stoerunterdrueckung_01.png"> <h2>Simulation der St&ouml;rung<a name="3"></a></h2><pre class="codeinput">D  = 0.5;     <span class="comment">% Distanz der Mikrophone in m</span>
+A  = 4        <span class="comment">% Mischfaktor der St&ouml;rung im Nutzsiganl</span>
+B = 0.2       <span class="comment">% Mischfaktor des Nutzsignals in der St&ouml;rung</span>
+delay = round((D/330)*f_s) <span class="comment">% ... in Abtasttakten</span>
+
+y_n =      x_n(delay:end)   + A * x_r(1:end-delay+1);
+y_r =  B * x_n(1:end-delay+1) +     x_r(delay:end);
+
+figure(2); subplot(2,2,1);
+plot( y_n(1:10000)); title(<span class="string">'Sprecher (t) + \alpha \cdot Hintergrund (t-dt)'</span>);
+            subplot(2,2,3);
+plot(y_r(1:10000)); title(<span class="string">'Hintergrund (t) + \beta \cdot Sprecher (t-dt)'</span>);
+
+soundsc(y_n,f_s)
+<span class="comment">%soundsc(y_r,f_s)</span>
+</pre><pre class="codeoutput">
+A =
+
+     4
+
+
+B =
+
+    0.2000
+
+
+delay =
+
+    17
+
+</pre><img vspace="5" hspace="5" src="stoerunterdrueckung_02.png"> <h2>Signalrekonstruktion<a name="4"></a></h2><pre class="codeinput">N = 30;   <span class="comment">% Filterordnung</span>
+w = zeros(1,N);
+STEP = 0.07;
+
+[x_n_dach,e,w] = lms(w,y_r,y_n,STEP);
+
+soundsc(e,f_s)
+subplot(2,2,2); plot(e(1:10000)); title(<span class="string">'Sch&auml;tzung von Sprecher (t)'</span>);
+subplot(2,2,4); plot(w); title(<span class="string">'Filterkoeffizienten'</span>)
+</pre><img vspace="5" hspace="5" src="stoerunterdrueckung_03.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.3<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Störunterdrückung
+%  durch einen adaptiver Prädiktor
+% Ein Reporter macht ein Interview an einer stark befahrenen
+% Straße. Skizzieren Sie ein adaptives System (\(<5 \) Blöcke) zur
+% Kompensation des Straßenlärms und beschreiben Sie es in 2 bis 3
+% Sätzen.
+% (c) HSM, B. Wir 2.8.2012 
+clear all; close all;
+
+%% Signale
+
+% Störung
+Z = 40000; %... Abtastwerte
+
+[x_r,f_s,NBITS] = wavread('road.wav');
+x_r = resample(x_r,1,4); f_s = f_s/4;
+x_r = x_r(1:Z);
+f_s
+NBITS
+%soundsc(x_r,f_s);
+
+% Nutzsignal
+[x_n,f_s,NBITS] = wavread('speech_dft.wav');
+x_n = resample(x_n,1,2); f_s = f_s/2;
+x_n = x_n(1:Z)'; 
+f_s
+NBITS
+% soundsc(x_n,f_s)
+
+figure(1); subplot(2,1,1);
+plot( x_r); title('Hintergrundgeräusch');
+            subplot(2,1,2); 
+plot(x_n); title('Sprecher');
+
+
+%% Simulation der Störung
+D  = 0.5;     % Distanz der Mikrophone in m
+A  = 4        % Mischfaktor der Störung im Nutzsiganl 
+B = 0.2       % Mischfaktor des Nutzsignals in der Störung
+delay = round((D/330)*f_s) % ... in Abtasttakten
+
+y_n =      x_n(delay:end)   + A * x_r(1:end-delay+1);
+y_r =  B * x_n(1:end-delay+1) +     x_r(delay:end);
+
+figure(2); subplot(2,2,1);
+plot( y_n(1:10000)); title('Sprecher (t) + \alpha \cdot Hintergrund (t-dt)');
+            subplot(2,2,3); 
+plot(y_r(1:10000)); title('Hintergrund (t) + \beta \cdot Sprecher (t-dt)');
+
+soundsc(y_n,f_s)
+%soundsc(y_r,f_s)
+
+%% Signalrekonstruktion
+N = 30;   % Filterordnung
+w = zeros(1,N);
+STEP = 0.07;
+
+[x_n_dach,e,w] = lms(w,y_r,y_n,STEP); 
+
+soundsc(e,f_s)
+subplot(2,2,2); plot(e(1:10000)); title('Schätzung von Sprecher (t)');
+subplot(2,2,4); plot(w); title('Filterkoeffizienten')
+
+
+
+##### SOURCE END #####
+-->
+   </body>
+</html>

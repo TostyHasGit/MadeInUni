@@ -1,0 +1,147 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>aZyklischeFaltung</title>
+      <meta name="generator" content="MATLAB 7.3">
+      <meta name="date" content="2012-08-23">
+      <meta name="m-file" content="aZyklischeFaltung"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#1">aZkylischeFaltung</a></li>
+               <li><a href="#2">(i) Berechnen Sie die Faltung und die Zyklische Faltung</a></li>
+               <li><a href="#3">(ii) Unter welcher Voraussetzung haben die Faltung und die zyklische</a></li>
+            </ul>
+         </div>
+         <h2>aZkylischeFaltung<a name="1"></a></h2>
+         <p>(i) Berechnen Sie die Faltung und die zyklische Faltung [1, 0, 0, 2] *(z) [1, 2, 3 ] f&uuml;r die Signall&auml;ngen N=4 und N=8. (ii()
+            Berechnen Sie die zyklische Faltung mit MATLAB. (iii) Unter welcher Voraussetzung haben die zyklische Faltung und die Faltung
+            das gleiche Ergebnis?
+         </p>
+         <p>HSM, B. Wir 3.5.2012, 20.8.12</p><pre class="codeinput">clear <span class="string">all</span>; close <span class="string">all</span>;
+</pre><h2>(i) Berechnen Sie die Faltung und die Zyklische Faltung<a name="2"></a></h2><pre>    ( mit Hilfe der FFT) von</pre><pre class="codeinput"> x = [1 0 0 2];
+ g = [ 1 2 3];
+
+ y   = conv(x,g)
+ <span class="comment">% N = 4;</span>
+ y_z4 = ifft (fft(x).* fft([g,0]))
+ <span class="comment">% N = 8;</span>
+ y_z8 = ifft (fft([x, 0, 0, 0, 0    ] ).* <span class="keyword">...</span>
+              fft([g, 0, 0, 0, 0, 0 ] ) );
+</pre><pre class="codeoutput">
+y =
+
+     1     2     3     2     4     6
+
+
+y_z4 =
+
+     5     8     3     2
+
+</pre><h2>(ii) Unter welcher Voraussetzung haben die Faltung und die zyklische<a name="3"></a></h2>
+         <p>Faltung das gleiche Ergebnis?</p>
+         <p>Antwort: Zero-Padding auf L&auml;nge L = N+M-1 mit  N,M L&auml;nge von g und x.</p>
+         <p class="footer"><br>
+            Published with MATLAB&reg; 7.3<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% aZkylischeFaltung
+% (i) Berechnen Sie die Faltung und die zyklische Faltung
+% [1, 0, 0, 2] *(z) [1, 2, 3 ] 
+% für die Signallängen N=4 und N=8. 
+% (ii() Berechnen Sie die zyklische
+% Faltung mit MATLAB. 
+% (iii) Unter welcher Voraussetzung haben die
+% zyklische Faltung und die Faltung das gleiche Ergebnis?
+% 
+% HSM, B. Wir 3.5.2012, 20.8.12
+clear all; close all;
+%% (i) Berechnen Sie die Faltung und die Zyklische Faltung
+%      ( mit Hilfe der FFT) von 
+
+ x = [1 0 0 2];
+ g = [ 1 2 3];
+ 
+ y   = conv(x,g)
+ % N = 4;
+ y_z4 = ifft (fft(x).* fft([g,0]))
+ % N = 8;
+ y_z8 = ifft (fft([x, 0, 0, 0, 0    ] ).* ...
+              fft([g, 0, 0, 0, 0, 0 ] ) );
+ 
+%% (ii) Unter welcher Voraussetzung haben die Faltung und die zyklische
+% Faltung das gleiche Ergebnis?
+%
+% Antwort: Zero-Padding auf Länge 
+% L = N+M-1 mit  N,M Länge von g und x.
+##### SOURCE END #####
+-->
+   </body>
+</html>

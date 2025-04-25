@@ -1,0 +1,175 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>korrelationstheorem1</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-08-17"><meta name="DC.source" content="korrelationstheorem1.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% korrelationstheoerem.m</span>
+<span class="comment">%</span>
+<span class="comment">% Skript SMU_o2, DSV 2012</span>
+<span class="comment">% B. Wir Sept. 02, 18.8.2012</span>
+
+close <span class="string">all</span>
+clear
+clc
+
+WERTE =512;
+
+
+x =randn(1,WERTE);
+pulse = [ 0 0 1 1 1 -1 -1 -1 1 -1 -1 1 -1 0 0];
+y = pulse;
+
+x(100:114) = x(100:114) + 2 * pulse;
+
+r_xy= xcorr(x,y);
+
+X = fft(x,2* length(x) -1); <span class="comment">% zero  padding wie xcorr.m</span>
+Y = fft(y,2* length(x) -1); <span class="comment">%</span>
+
+r_XY = real (ifft( X .* conj(Y)));
+
+figure(1)
+
+subplot(3,2,1)
+plot(x)
+title(<span class="string">' Radarpuls + Rauschen'</span>)
+
+subplot(3,2,3)
+plot(y)
+title(<span class="string">' Radarpuls'</span>)
+axis([0 15 -2 2])
+
+subplot(3,2,2)
+plot(abs(X))
+title(<span class="string">'Signalspektrum'</span>)
+
+
+subplot(3,2,4)
+plot(abs(Y))
+title(<span class="string">'Pulsspektrum'</span>)
+
+subplot(3,2,5)
+plot(r_xy)
+title(<span class="string">'Korrelationsfolge'</span>)
+
+subplot(3,2,6)
+plot(r_XY)
+title(<span class="string">'Zyklische Korrelationsfolge'</span>)
+</pre><img vspace="5" hspace="5" src="korrelationstheorem1_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% korrelationstheoerem.m
+% 
+% Skript SMU_o2, DSV 2012
+% B. Wir Sept. 02, 18.8.2012
+
+close all
+clear
+clc
+
+WERTE =512;
+
+
+x =randn(1,WERTE);
+pulse = [ 0 0 1 1 1 -1 -1 -1 1 -1 -1 1 -1 0 0];
+y = pulse;
+
+x(100:114) = x(100:114) + 2 * pulse;
+
+r_xy= xcorr(x,y);
+
+X = fft(x,2* length(x) -1); % zero  padding wie xcorr.m
+Y = fft(y,2* length(x) -1); % 
+
+r_XY = real (ifft( X .* conj(Y)));
+
+figure(1)
+
+subplot(3,2,1)
+plot(x)
+title(' Radarpuls + Rauschen')
+
+subplot(3,2,3)
+plot(y)
+title(' Radarpuls')
+axis([0 15 -2 2]) 
+
+subplot(3,2,2)
+plot(abs(X))
+title('Signalspektrum')
+
+
+subplot(3,2,4)
+plot(abs(Y))
+title('Pulsspektrum')
+
+subplot(3,2,5)
+plot(r_xy)
+title('Korrelationsfolge')
+
+subplot(3,2,6)
+plot(r_XY)
+title('Zyklische Korrelationsfolge')
+
+
+##### SOURCE END #####
+--></body></html>

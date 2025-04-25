@@ -1,0 +1,186 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>aOverlapAdd</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-08-20"><meta name="DC.source" content="aOverlapAdd.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Overlap-Add-Methode</a></li><li><a href="#2">Bl&ouml;cke bilden und Nullen erg&auml;nzen</a></li><li><a href="#3">Zyklische Faltung</a></li><li><a href="#4">FFT-Faltung</a></li></ul></div><h2>Overlap-Add-Methode<a name="1"></a></h2><p>(c) HSM, B. Wir 20.8.2012</p><p>Falten Sie die Signale  x_k = [ 1 , 2 , 3 , 4, 5,  6 ,7, 8 ]   und g_k = [ 1 1] mit der Overlap-Add-Methode, wobei die Blockl&auml;nge L=4 ist. Verwenden Sie dabei statt der FFT und IFFT die zklische Faltung im Zeitbereich.</p><pre class="codeinput">L =4;
+N = 2;
+M = L + N -1
+
+x_k = [ 1 2 3 4 5 6 7 8]
+g_k = [ 1 1 ]
+</pre><pre class="codeoutput">
+M =
+
+     5
+
+
+x_k =
+
+     1     2     3     4     5     6     7     8
+
+
+g_k =
+
+     1     1
+
+</pre><h2>Bl&ouml;cke bilden und Nullen erg&auml;nzen<a name="2"></a></h2><pre class="codeinput">x1= [x_k(1:L),0]
+x2 = [x_k(L+1:2*L),0]
+
+g  = [ g_k, 0, 0, 0]
+</pre><pre class="codeoutput">
+x1 =
+
+     1     2     3     4     0
+
+
+x2 =
+
+     5     6     7     8     0
+
+
+g =
+
+     1     1     0     0     0
+
+</pre><h2>Zyklische Faltung<a name="3"></a></h2><p>== Faltung wegen Nullen</p><pre class="codeinput">y1 = filter(g,1,x1)
+y2 = filter(g,1,x2)
+
+y = [ y1 , 0 , 0,  0,  0  ] + <span class="keyword">...</span>
+    [ 0 ,  0 , 0,  0,  y2 ]
+
+y = conv(x_k,g_k)
+</pre><pre class="codeoutput">
+y1 =
+
+     1     3     5     7     4
+
+
+y2 =
+
+     5    11    13    15     8
+
+
+y =
+
+     1     3     5     7     9    11    13    15     8
+
+
+y =
+
+     1     3     5     7     9    11    13    15     8
+
+</pre><h2>FFT-Faltung<a name="4"></a></h2><pre class="codeinput">y1 = ifft(fft(x1).*fft(g));
+y2 = ifft(fft(x2).*fft(g));
+
+y_fft = [ y1 , 0 , 0,  0,  0  ] + <span class="keyword">...</span>
+        [ 0 ,  0 , 0,  0,  y2 ]
+</pre><pre class="codeoutput">
+y_fft =
+
+     1     3     5     7     9    11    13    15     8
+
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Overlap-Add-Methode 
+% (c) HSM, B. Wir 20.8.2012
+%
+% Falten Sie die Signale  x_k = [ 1 , 2 , 3 , 4, 5,  6 ,7, 8 ]   und 
+% g_k = [ 1 1] mit der Overlap-Add-Methode, wobei die Blocklänge L=4 ist. 
+% Verwenden Sie dabei statt der FFT und IFFT die zklische Faltung im 
+% Zeitbereich. 
+
+L =4;
+N = 2;
+M = L + N -1
+
+x_k = [ 1 2 3 4 5 6 7 8]
+g_k = [ 1 1 ]
+
+%% Blöcke bilden und Nullen ergänzen
+
+x1= [x_k(1:L),0]
+x2 = [x_k(L+1:2*L),0]
+
+g  = [ g_k, 0, 0, 0]
+
+%% Zyklische Faltung 
+% == Faltung wegen Nullen
+y1 = filter(g,1,x1)
+y2 = filter(g,1,x2)
+
+y = [ y1 , 0 , 0,  0,  0  ] + ...
+    [ 0 ,  0 , 0,  0,  y2 ]
+    
+y = conv(x_k,g_k)    
+
+%% FFT-Faltung
+
+y1 = ifft(fft(x1).*fft(g));
+y2 = ifft(fft(x2).*fft(g));
+
+y_fft = [ y1 , 0 , 0,  0,  0  ] + ...
+        [ 0 ,  0 , 0,  0,  y2 ]
+
+##### SOURCE END #####
+--></body></html>
