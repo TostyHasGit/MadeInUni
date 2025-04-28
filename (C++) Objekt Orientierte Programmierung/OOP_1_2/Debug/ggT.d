@@ -1,0 +1,1 @@
+ggT.o: ../ggT.cpp

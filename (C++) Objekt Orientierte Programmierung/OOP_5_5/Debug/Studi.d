@@ -1,0 +1,1 @@
+Studi.o: ../Studi.cpp
