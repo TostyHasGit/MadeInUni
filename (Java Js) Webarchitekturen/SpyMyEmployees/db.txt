@@ -1,0 +1,60 @@
+DROP TABLE IF EXISTS Images CASCADE;
+DROP TABLE IF EXISTS ImageErrorLog CASCADE;
+DROP TABLE IF EXISTS Cameras CASCADE;
+DROP TABLE IF EXISTS SiteManagersLocations CASCADE;
+DROP TABLE IF EXISTS Locations CASCADE;
+DROP TABLE IF EXISTS Users CASCADE;
+
+
+CREATE TABLE Users (
+    ID SERIAL PRIMARY KEY,
+    Name VARCHAR(255),
+    Email VARCHAR(255) UNIQUE,
+    Hashed_Password VARCHAR(255),
+    Role VARCHAR(50) CHECK (Role IN ('Admin', 'SiteManager', 'Boss'))
+);
+
+CREATE TABLE Locations (
+    ID SERIAL PRIMARY KEY,
+    Location_Name VARCHAR(255)
+);
+
+CREATE TABLE Cameras (
+    ID SERIAL PRIMARY KEY,
+    Name VARCHAR(255),
+    Description TEXT,
+    URL VARCHAR(255),
+    Status VARCHAR(50) CHECK (Status IN ('Active', 'Inactive')),
+    Location_ID INT NOT NULL,
+    FOREIGN KEY (Location_ID) REFERENCES Locations(ID)
+);
+
+CREATE TABLE Images (
+    ID SERIAL PRIMARY KEY,
+    File_Path VARCHAR(255) NOT NULL,
+    Icon_Path VARCHAR(255) NOT NULL,
+    Camera_ID INT NOT NULL,
+    Capture_Time TIMESTAMP NOT NULL,
+    FOREIGN KEY (Camera_ID) REFERENCES Cameras(ID)
+);
+
+CREATE TABLE SiteManagersLocations (
+    ID SERIAL PRIMARY KEY,
+    User_ID INT NOT NULL,
+    Location_ID INT NOT NULL,
+    FOREIGN KEY (User_ID) REFERENCES Users(ID) ON DELETE CASCADE,
+    FOREIGN KEY (Location_ID) REFERENCES Locations(ID) ON DELETE CASCADE
+);
+
+CREATE TABLE ImageErrorLog (
+	ID SERIAL PRIMARY KEY,
+	Camera_ID INT NOT NULL,
+	Capture_Time TIMESTAMP NOT NULL,
+	Checked BOOLEAN DEFAULT FALSE,
+	Description TEXT,
+	FOREIGN KEY (Camera_ID) REFERENCES Cameras(ID)
+);
+	
+INSERT INTO users (name, email, hashed_password, role)
+VALUES ('Admin', 'admin@admin.de', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'Admin');
+

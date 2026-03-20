@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+
+<Context>
+	<Resource name="jdbc/libraryDB1" auth="Container"
+		type="javax.sql.DataSource" driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://db.inftech.hs-mannheim.de/n2112209_WAITDB"
+		username="n2112209" password="123456qwertz" maxActive="250"
+		maxIdle="5" />
+
+	<Environment name="project.root"
+		value="C:\Users\49179\Desktop\WAI\Big Project WAI\Das Projekt\wai06\SpyMyEmployees"
+		type="java.lang.String" override="false" />
+</Context>

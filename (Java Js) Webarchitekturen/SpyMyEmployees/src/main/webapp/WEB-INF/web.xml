@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+		 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" 
+		 id="WebApp_ID" version="4.0">
+
+<welcome-file-list>
+    <welcome-file>jsp/auth/login.jsp</welcome-file>
+</welcome-file-list>
+
+  <servlet>
+    <servlet-name>SiteManagerIndex</servlet-name>
+    <servlet-class>servlets.admin.siteManager.SiteManagerIndex</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>SiteManagerIndex</servlet-name>
+    <url-pattern>/admin/siteManagers</url-pattern>
+  </servlet-mapping>
+
+
+  <servlet>
+    <servlet-name>SiteManagerCreate</servlet-name>
+    <servlet-class>servlets.admin.siteManager.SiteManagerCreate</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>SiteManagerCreate</servlet-name>
+    <url-pattern>/admin/siteManager/create</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>SiteManagerEdit</servlet-name>
+    <servlet-class>servlets.admin.siteManager.SiteManagerEdit</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>SiteManagerEdit</servlet-name>
+	<url-pattern>/admin/siteManager/edit</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>SiteManagerDelete</servlet-name>
+    <servlet-class>servlets.admin.siteManager.SiteManagerDelete</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>SiteManagerDelete</servlet-name>
+	<url-pattern>/admin/siteManager/delete</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>LocationCreate</servlet-name>
+    <servlet-class>servlets.admin.location.LocationCreate</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>LocationCreate</servlet-name>
+    <url-pattern>/admin/location/create</url-pattern>
+  </servlet-mapping>
+ 
+  <servlet>
+    <servlet-name>LocationIndex</servlet-name>
+    <servlet-class>servlets.admin.location.LocationIndex</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>LocationIndex</servlet-name>
+    <url-pattern>/admin/locations</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>LocationEdit</servlet-name>
+    <servlet-class>servlets.admin.location.LocationEdit</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>LocationEdit</servlet-name>
+	<url-pattern>/admin/location/edit</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>LocationDelete</servlet-name>
+    <servlet-class>servlets.admin.location.LocationDelete</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>LocationDelete</servlet-name>
+	<url-pattern>/admin/location/delete</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet>
+    <servlet-name>DashboardAdmin</servlet-name>
+    <servlet-class>servlets.admin.DashboardAdmin</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>DashboardAdmin</servlet-name>
+	<url-pattern>/admin/dashboard</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>ProfileEdit</servlet-name>
+    <servlet-class>servlets.profile.ProfileEdit</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>ProfileEdit</servlet-name>
+	<url-pattern>/profile</url-pattern>
+  </servlet-mapping>
+
+<servlet>
+  <servlet-name>CameraIndex</servlet-name>
+  <servlet-class>servlets.admin.cameras.CameraIndex</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>CameraIndex</servlet-name>
+  <url-pattern>/admin/cameras</url-pattern>
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>CameraCreate</servlet-name>
+  <servlet-class>servlets.admin.cameras.CameraCreate</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>CameraCreate</servlet-name>
+  <url-pattern>/admin/camera/create</url-pattern>
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>CameraEdit</servlet-name>
+  <servlet-class>servlets.admin.cameras.CameraEdit</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>CameraEdit</servlet-name>
+  <url-pattern>/admin/camera/edit</url-pattern>
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>CameraDelete</servlet-name>
+  <servlet-class>servlets.admin.cameras.CameraDelete</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>CameraDelete</servlet-name>
+  <url-pattern>/admin/camera/delete</url-pattern>
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>CameraIndexStation</servlet-name>
+  <servlet-class>servlets.controlStation.cameraStation.CameraIndexStation</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>CameraIndexStation</servlet-name>
+  <url-pattern>/cameras</url-pattern>
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>ShowCam</servlet-name>
+  <servlet-class>servlets.controlStation.cameraStation.ShowCam</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>ShowCam</servlet-name>
+  <url-pattern>/showCam</url-pattern>
+</servlet-mapping>
+<!-- <servlet>
+    <servlet-name>LoginServlet</servlet-name>
+    <servlet-class>auth.LoginServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>LoginServlet</servlet-name>
+    <url-pattern>/login</url-pattern>
+</servlet-mapping> -->
+
+<resource-ref>
+    <description>PostgreSQL DB Connection</description>
+    <res-ref-name>jdbc/libraryDB1</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+</resource-ref>
+</web-app>
